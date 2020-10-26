@@ -13,8 +13,8 @@
 
 
 //                                -------Add your Details here-------
-String hfuid1 = "***REMOVED***";// if using RC522 Put your UID here!
-String hfuid2 = "***REMOVED***";// if using more than one uid for RC522, edit this
+String hfuid1 = "[UID]";// if using RC522 Put your UID here!
+String hfuid2 = "[UID]";// if using more than one uid for RC522, edit this
 //                         ----------------------------------------------
 //                                          Code Start
 //                         ----------------------------------------------
