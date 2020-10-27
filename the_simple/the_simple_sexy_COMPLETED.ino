@@ -65,9 +65,8 @@
 
 
 //                                -------Add your Details here-------
-String hfuid1 = "DE AD BE EF";// if using RC522 Put your UID here!
-String hfuid2 ="put your spair uid here";// if using more than one uid for RC522, edit this
-
+String hfuid1 = "DE AD BE EF 00 13 37";// if using RC522 Put your UID here!
+String hfuid2 ="Put spare UID here";// if using more than one uid for RC522, edit this
 //                         ----------------------------------------------
 //                                          Code Start
 //                         ----------------------------------------------
@@ -91,8 +90,7 @@ int ledbuz = 2;// buzzer or led
 
 void setup() 
 {
-pinMode(7, OUTPUT);   // Declaring this Relay as output
-  digitalWrite(7, HIGH); // setting it to OFF
+
   pinMode(relay1, OUTPUT);   // Declaring this Relay as output
   digitalWrite(relay1, HIGH); // setting it to OFF
   pinMode(relay2, OUTPUT);   //Declaring this Relay as output
@@ -171,7 +169,7 @@ void loop()
        content.concat(String(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " "));
        content.concat(String(mfrc522.uid.uidByte[i], HEX));
     }
-    Serial.println();
+     Serial.println();
     Serial.print("Message : ");
     content.toUpperCase();
     if (content.substring(1) == (hfuid1)|| content.substring(1)== (hfuid2))  
@@ -199,7 +197,7 @@ Serial.println("Authorized access Motorcycle Engaged");
          myDFPlayer.play(3);  //Play the first mp3
          #endif
     
-      delay(2500);//allows bike time to start up
+      delay(6000);//allows bike time to start up
       digitalWrite(relay2, LOW);//activates ignition
       Serial.println("Motorcycle Starting");
       delay(2500);//waits 4 seconds for bike to tick over
