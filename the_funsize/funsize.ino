@@ -13,7 +13,7 @@
 
 
 //                                -------Add your Details here-------
-String hfuid1 = "[UID]";// if using RC522 Put your UID here!
+String hfuid1 = "DE AD BE EF 13 37";// if using RC522 Put your UID here!
 String hfuid2 = "[UID]";// if using more than one uid for RC522, edit this
 //                         ----------------------------------------------
 //                                          Code Start
@@ -34,9 +34,10 @@ prevTime=0;
 #define RST_PIN 9 // the RST pin is conected tp pin 9
 MFRC522 mfrc522(SS_PIN, RST_PIN);   // Create MFRC522 instance.
 int relay1 = 6; // relay 1 dash 
-int relay2 = 5; // relay 2 ignition 
-int checklock = digitalRead(2);//  checks if door is locked or open.(limit switch)
-int ledbuz = 4;// buzzer or led
+int relay2 = 5; // relay 2 ignition
+bool checklock;
+//int checklock = digitalRead(4);//  checks if door is locked or open.(limit switch)
+int ledbuz = 2;// buzzer or led
 
 
 
@@ -44,14 +45,14 @@ int ledbuz = 4;// buzzer or led
 
 void setup() 
 {
-  pinMode(2, INPUT_PULLUP);
+  pinMode(4, INPUT_PULLUP);
 
   pinMode(interruptPin,INPUT);//Set pin d3 to input
   pinMode(relay1, OUTPUT);   // Declaring this Relay as output
   digitalWrite(relay1, HIGH); // setting it to OFF
   pinMode(relay2, OUTPUT);   //Declaring this Relay as output
   digitalWrite(relay2, HIGH); // setting it to OFF
- 
+  checklock = digitalRead(4);
  
   #if defined(usingledbuz)
   pinMode(ledbuz, OUTPUT);   //Declaring the buzzer or LED as output
@@ -106,9 +107,10 @@ void loop()
     // Awaiting an UID to be Presented
     while ( ! mfrc522.PICC_IsNewCardPresent()) 
     {
-      if(millis() > millisAtStartOfLoop + timeToWaitForNFCBeforeSleeping ) 
-      Serial.println("Timed Out");
-      Going_To_Sleep();
+      if(millis() > millisAtStartOfLoop + timeToWaitForNFCBeforeSleeping ) {
+        Serial.println("Timed Out");
+        Going_To_Sleep();
+      }
     }
     // Select one of the cards
     if ( ! mfrc522.PICC_ReadCardSerial()) 
@@ -140,51 +142,51 @@ void loop()
  #endif
 
 void correctuid(){ // If UID is correct do this ....
-
-Serial.println("Authorized access Door Engaged");
-   
-     #if defined(usingledbuz) 
-      digitalWrite(ledbuz, HIGH);//activates led or buzzer , one beep
-      delay(200);//
-      digitalWrite(ledbuz, LOW); //
-      #endif
-    
-      #if defined (usingmp3player)
-         myDFPlayer.play(3);  //Play the first mp3
+  Serial.println("Authorized access Door Engaged");
+     
+       #if defined(usingledbuz) 
+        digitalWrite(ledbuz, HIGH);//activates led or buzzer , one beep
+        delay(200);//
+        digitalWrite(ledbuz, LOW); //
+        #endif
+      
+        #if defined (usingmp3player)
+           myDFPlayer.play(3);  //Play the first mp3
+           #endif
+      //---------------------------------------------------------------------------------------------------------------------------
+       Serial.println(checklock);
+       checklock = digitalRead(4);
+       if (checklock == 1) { // checks if door is open or locked.
+  
+        digitalWrite(relay1, LOW);
+          #if defined(usingledbuz)
+              digitalWrite(ledbuz, HIGH);
+              digitalWrite(ledbuz, LOW); 
+          #endif
+        delay (3000);
+        digitalWrite(relay1, HIGH); // one beep for locked
+        Serial.println("door Locked");
+        Going_To_Sleep();
+      
+    } else {
+  
+     digitalWrite(relay2, LOW);
+         #if defined(usingledbuz)
+             digitalWrite(ledbuz, HIGH);//activates led or buzzer , one beep
+             delay(200);//
+             digitalWrite(ledbuz, LOW); 
+             delay (200);//
+             digitalWrite(ledbuz, HIGH);//activates led or buzzer , one beep
+             delay(200);//
+             digitalWrite(ledbuz, LOW);  // 2 beeps for locked
          #endif
-    //---------------------------------------------------------------------------------------------------------------------------
-     Serial.println(checklock);
-     if (checklock == HIGH) { // checks if door is open or locked.
-
-    digitalWrite(relay1, LOW);
-      #if defined(usingledbuz)
-          digitalWrite(ledbuz, HIGH);
-          digitalWrite(ledbuz, LOW); 
-      #endif
-    delay (3000);
-    digitalWrite(relay1, HIGH); // one beep for locked
-    Serial.println("door Locked");
-    Going_To_Sleep();
-    
-  } else {
-
-   digitalWrite(relay2, LOW);
-       #if defined(usingledbuz)
-           digitalWrite(ledbuz, HIGH);//activates led or buzzer , one beep
-           delay(200);//
-           digitalWrite(ledbuz, LOW); 
-           delay (200);//
-           digitalWrite(ledbuz, HIGH);//activates led or buzzer , one beep
-           delay(200);//
-           digitalWrite(ledbuz, LOW);  // 2 beeps for locked
-       #endif
-    delay (3000);
-    digitalWrite(relay2, HIGH);
-    Serial.println("Door Unlocked");
-    delay (100);
-    Going_To_Sleep();
-
-  }
+      delay (3000);
+      digitalWrite(relay2, HIGH);
+      Serial.println("Door Unlocked");
+      delay (100);
+      Going_To_Sleep();
+  
+    }
 }
 
     
@@ -223,17 +225,18 @@ void Going_To_Sleep(){
     sleep_cpu();//activating sleep mode
     Serial.println("Scan your Uid!");//next line of code executed after the interrupt 
   }
-  void wakeUp(){
+void wakeUp(){
   Serial.println("System Awake");//Print message to serial monitor
    sleep_disable();//Disable sleep mode
   detachInterrupt(1); //Removes the interrupt from pin 3;
 }
+
 void timeout(long interval){
-while (1){
-currTime = millis();
-if (currTime-prevTime>interval){
-prevTime=currTime;
-break;}
+  while (1){
+    currTime = millis();
+    if (currTime-prevTime>interval){
+    prevTime=currTime;
+  break;}
 }}
 
 //                -------------------------------------------------
