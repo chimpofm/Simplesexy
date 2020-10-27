@@ -1,3 +1,8 @@
+#include "Arduino.h"
+#include "SoftwareSerial.h"
+#include "DFRobotDFPlayerMini.h"
+#include <SPI.h>
+#include <MFRC522.h>
 
                        
 //                                  ---------TECHMEUP PROJECT 1--------
@@ -68,11 +73,6 @@ int hfuid2 ="put your spair uid here";// if using more than one uid for RC522, e
 //                         ----------------------------------------------
 
 
-#include "Arduino.h"
-#include "SoftwareSerial.h"
-#include "DFRobotDFPlayerMini.h"
-#include <SPI.h>
-#include <MFRC522.h>
 
 SoftwareSerial mySoftwareSerial(8, 7); // RX, TX
 DFRobotDFPlayerMini myDFPlayer;
