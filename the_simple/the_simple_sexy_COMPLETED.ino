@@ -65,8 +65,8 @@
 
 
 //                                -------Add your Details here-------
-int hfuid1 = "09 03 61 B3";// if using RC522 Put your UID here!
-int hfuid2 ="put your spair uid here";// if using more than one uid for RC522, edit this
+String hfuid1 = "DE AD BE EF";// if using RC522 Put your UID here!
+String hfuid2 ="put your spair uid here";// if using more than one uid for RC522, edit this
 
 //                         ----------------------------------------------
 //                                          Code Start
