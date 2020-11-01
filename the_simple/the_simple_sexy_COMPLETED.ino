@@ -209,7 +209,7 @@ Serial.println("Authorized access Motorcycle Engaged");
       #endif
 
     #if defined(toggleMode)
-      toggleState = !togglestate;
+      toggleState = !toggleState;
       Serial.print("Toggling relay state to: ");
       if(toggleState) Serial.println("ON!");
       else Serial.println("OFF!");
