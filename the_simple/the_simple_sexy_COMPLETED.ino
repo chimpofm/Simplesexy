@@ -62,6 +62,7 @@
 //#define usingledbuz// unmark this if your using the pin 6 LED or Buzzer
 //#define usingmp3player// unmark this if using the df mp3player
 #define usingrc522 // unmark this if you are using the RC522 13.56 NFC-HF RFID reader
+#define toggleMode //unmark this if you want the NFC chip to toggle 
 
 
 //                                -------Add your Details here-------
@@ -86,6 +87,7 @@ int relay3 = 4; //relay 3 for mp3 player pops
 int relay4 = 3; //relay 4 NC
 int ledbuz = 2;// buzzer or led
 
+bool toggleState = false;
 
 
 void setup() 
@@ -172,7 +174,7 @@ void loop()
      Serial.println();
     Serial.print("Message : ");
     content.toUpperCase();
-    if (content.substring(1) == (hfuid1)|| content.substring(1)== (hfuid2))  
+    if (content.equals(hfuid1) || content.equals(hfuid2))  
     //change here the UID of the cards to give access, add more with  || content.substring(1)== "another UID"
     {correctuid();}
    else  
@@ -196,13 +198,23 @@ Serial.println("Authorized access Motorcycle Engaged");
       #if defined (usingmp3player)
          myDFPlayer.play(3);  //Play the first mp3
          #endif
-    
-      delay(6000);//allows bike time to start up
+
+    #if !defined(toggleMode) //if not using toggleState the ignition is turned on momentarily
+      delay(2500);//allows bike time to start up
       digitalWrite(relay2, LOW);//activates ignition
       Serial.println("Motorcycle Starting");
       delay(2500);//waits 4 seconds for bike to tick over
       digitalWrite(relay2, HIGH); //deactivates ignition.
       Serial.println("Deactivate Ignition");
+      #endif
+
+    #if defined(toggleMode)
+      toggleState = !togglestate;
+      Serial.print("Toggling relay state to: ");
+      if(toggleState) Serial.println("ON!");
+      else Serial.println("OFF!");
+      digitalWrite(relay2, toggleState);
+    #endif
 }
 void wronguid (){ // if uid incorrect do this....
   Serial.println(" Access denied");
