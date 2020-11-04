@@ -174,7 +174,7 @@ void loop()
      Serial.println();
     Serial.print("Message : ");
     content.toUpperCase();
-    if (content.equals(hfuid1) || content.equals(hfuid2))  
+    if (content.substring(1)==(hfuid1) || content.substring(1)==(hfuid2))  
     //change here the UID of the cards to give access, add more with  || content.substring(1)== "another UID"
     {correctuid();}
    else  
